@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Search</a>
+        </div>
+    </nav>
+    <div class="container mt-3">
+    <h3>SearchForm</h3>
+    <form id="searchForm">
+        <div class="mb-3">
+            <label for="list" class="form-label">List : </label>
+            <input type="list" class="form-control" id="list" required>
+        </div>
+        <div class="mb-3">
+            <label for="keyword" class="form-label">Keyword : </label>
+            <input type="keyword" class="form-control" id="keyword" required>
+        </div>
+        <div class="mb-3">
+            <label for="type" class="form-label">SearchType : </label>
+            <select name="type" id="type" class="form-control" required>
+                <option value="linear">Linear Search</option>
+                <option value="binary">Binary Search</option>
+                <option value="bubble">Bubble Search</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary pull-right">Search</button>
+    </form>
+    </div>
+    <div class="container">
+    <hr>
+    </div>
+    <div class="container mt-1">
+    <h3>Result</h3>
+    <blockquote class="blockquote" id="blockquote-result">
+        <span>
+            <hr>
+            <p id="result-lists"></p>
+            <hr>
+            <p id="search-keyword"></p>
+            <hr>
+            <p id="search-type"></p>
+            <hr>
+        </span>
+        <span id="search-result">
+
+        </span>
+        <hr>
+    </blockquote>
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+<script>
+    search = () =>{
+
+        var lists = document.getElementById('list').value.split(",");
+        var keyword = document.getElementById('keyword').value
+        var type = document.getElementById('type')
+
+        var searchResult = document.getElementById('search-result')
+        searchResult.innerHTML = "";
+
+        resultListElement = document.getElementById("result-lists")
+        resultListElement.innerHTML = `Lists : ${document.getElementById('list').value}`
+
+        resultKeywordElement = document.getElementById("search-keyword")
+        resultKeywordElement.innerHTML = `Search : ${keyword}`
+
+        resultTypeElement = document.getElementById("search-type")
+        resultTypeElement.innerHTML = `SearchType : ${type.value}`
+
+        switch (type.value) {
+            case "linear":
+                linearSearch(lists, keyword)
+                break;
+
+            case "binary":
+                binarySearch(lists, keyword)
+                break;
+
+            case "bubble":
+                bubbleSearch(lists, keyword)
+                break;
+        
+            default:
+                linearSearch(lists, keyword)
+                break;
+        }
+    }
+
+    linearSearch = (lists, keyword) => {
+        searchResult = document.getElementById('search-result')
+        var round = 1;
+        for (const [key, value] of Object.entries(lists)) {
+            if(value != keyword){
+                appendResult(`ROUND (${round++})  | FAIL |  ${value} != ${keyword}`)
+            }else{
+                appendResult(`ROUND (${round++})  | SUCCESS | ${value} = ${keyword}`)
+                return false;
+            }
+        }
+    }
+
+    binarySearch = (lists, keyword) => {
+        sortingLists = lists.sort((a,b) => {
+            return Number(a) - Number(b)
+        })
+        var target = Number(keyword)
+        var low = 0 
+        var high = sortingLists.length - 1
+        var round = 1;
+        while (low <= high) {
+            var middle = Math.floor((low + high) / 2)
+            var data = Number(sortingLists[middle])
+            if(target == data){
+                appendResult(`ROUND (${round}) | SUCCESS | ${data} = ${target} AT [${middle}]`)
+                return false
+            }else if(target < data){
+                high = middle - 1
+                appendResult(`ROUND (${round}) | FAIL | ${data} != ${target} AT [${middle}]`)
+            }else if(target > data){
+                appendResult(`ROUND (${round}) | FAIL | ${data} != ${target} AT [${middle}]`)
+                low = middle + 1
+            }
+            round++
+        }
+        appendResult(`DATA ${target} NOT FOUND`)
+    }
+
+    bubbleSearch = (lists, keyword) => {
+        for (let i = 0; i < lists.length - 1; i++) {
+            for (let u = 0; u < lists.length; u++) {
+                appendResult(`${lists}`)
+                if(Number(lists[u] > lists[u + 1])){
+                    var tmpArr = lists[u]
+                    lists[u] = lists[u + 1]
+                    lists[u + 1] = tmpArr
+                }
+            }
+            appendResult(`___________________________________`)
+        }
+        appendResult(`Last Bubble Sort ${lists}`)
+    }
+
+    appendResult = (text) =>{
+        searchResult = document.getElementById('search-result')
+        resultElement = document.createElement("P")
+        resultElement.innerHTML = `${text}`
+        searchResult.appendChild(resultElement)
+    }
+
+    document.getElementById('searchForm').addEventListener("submit", function(e) {
+        e.preventDefault();
+        search()
+    });
+</script>
+</html>

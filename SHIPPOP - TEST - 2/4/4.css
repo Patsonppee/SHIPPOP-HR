@@ -1,0 +1,11 @@
+.row-box{
+    width: 100%;
+    text-align: justify;
+}
+.box{
+    display: inline-block;
+    height: 200px;
+    width: 240px;
+    border: 1px black solid;
+    margin: 5px;
+}
